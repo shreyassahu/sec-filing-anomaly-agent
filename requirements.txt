@@ -1,0 +1,4 @@
+requests
+sec-api
+psycopg2
+beautifulsoup4

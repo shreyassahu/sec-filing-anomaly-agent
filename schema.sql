@@ -23,7 +23,8 @@ CREATE TABLE financial_metrics (
     metric_value NUMERIC,
     unit VARCHAR(10) DEFAULT 'USD',
     fiscal_year INTEGER,
-    fiscal_quarter INTEGER
+    fiscal_quarter INTEGER,
+    UNIQUE (filing_id, metric_name, fiscal_year)
 );
 
 CREATE TABLE anomalies (

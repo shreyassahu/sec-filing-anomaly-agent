@@ -18,3 +18,11 @@
 
 - JPMorgan's long-term debt tag includes current maturities — parser needs anti-double-counting logic
 - Banks have fundamentally different income statement structure — revenue = net of interest expense
+
+## Day 2 — July 5, 2026
+
+### Done
+
+## Day 3 - July 6, 2026
+
+- But you should also log it in your CHANGELOG.md and eventually in docs/postmortem.md with the specifics: "JPMorgan and ExxonMobil don't tag us-gaap:OperatingIncomeLoss. Banks have a fundamentally different income statement structure without a standard operating income line. Parser returns NULL for these companies."
