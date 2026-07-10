@@ -1,4 +1,4 @@
 .env
 data/
 CLAUDE.md
-__pycache__/
+src/__pycache__/

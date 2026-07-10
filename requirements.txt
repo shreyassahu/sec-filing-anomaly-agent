@@ -2,3 +2,8 @@ requests
 sec-api
 psycopg2
 beautifulsoup4
+chromadb
+langgraph
+langchain
+ipython
+langchain-anthropic
