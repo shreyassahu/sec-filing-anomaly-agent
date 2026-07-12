@@ -1,10 +1,10 @@
 import os
 
-from insert_filings_to_db import DBOperations
-from rag_pipeline import RAGPipeline
-from html_parser import HTMLParser
-from extract_section import ExtractSection
-from edgar_client import EdgarClient
+from src.insert_filings_to_db import DBOperations
+from src.rag_pipeline import RAGPipeline
+from src.html_parser import HTMLParser
+from src.extract_section import ExtractSection
+from src.edgar_client import EdgarClient
 
 
 FILINGS_DIR = "data/filings"
@@ -53,7 +53,7 @@ class IngestPipeline:
         if download:
             self.download_filings(cik_list)
 
-        for cik in sorted(os.listdir(FILINGS_DIR)):
+        for cik in cik_list:
             cik_path = os.path.join(FILINGS_DIR, cik)
             if not os.path.isdir(cik_path):
                 continue
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     pipeline = IngestPipeline()
     # Filings are already downloaded and filing rows are in Postgres,
     # so default to download=False for a fast metrics + RAG re-ingest.
-    # pipeline.run(COMPANY_CIKS, download=False)
+    pipeline.run(COMPANY_CIKS, download=False)
 
     print(pipeline.rag.query("What drove Apple's revenue growth in 2023?", 
                        where={"$and": [{"cik": "0000320193"}, {"fiscal_year": 2023}]}))

@@ -1,5 +1,5 @@
 import psycopg2
-from utils.format_accession_number import format_accession_number
+from src.utils.format_accession_number import format_accession_number
 
 
 class DBOperations:
@@ -58,6 +58,7 @@ class DBOperations:
 
     
     def retrieve_metrics(self):
+
         cursor = self.conn.cursor()
         cursor.execute("""
         SELECT DISTINCT c.ticker, fm.metric_name, fm.fiscal_year, fm.metric_value
@@ -71,6 +72,62 @@ class DBOperations:
         self.conn.commit()
         cursor.close()
 
+        return rows
+    
+    def retrieve_cik_from_company_ticker(self, ticker: str):
+
+        cursor = self.conn.cursor()
+        cursor.execute("""
+        SELECT cik FROM companies
+        WHERE ticker=%s
+        """, (ticker,))
+        rows = cursor.fetchall()
+
+        self.conn.commit()
+        cursor.close()
+
+        return rows
+    
+
+    def seed_company(self, cik: str, name: str, ticker: str, sector: str, sic_code: str):
+
+        cursor = self.conn.cursor()
+        cursor.execute("""
+        INSERT INTO companies (cik, name, ticker, sector, sic_code)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (cik) DO NOTHING 
+        """, (cik, name, ticker, sector, sic_code))
+
+        self.conn.commit()
+        cursor.close()
+
+    
+    def retrieve_metrics_for_company(self, cik: str, fiscal_year: list=None, metric_name: list=None):
+
+        cursor = self.conn.cursor()
+
+        query = """
+            SELECT DISTINCT c.ticker, c.cik, fm.metric_name, fm.fiscal_year, fm.metric_value
+            FROM financial_metrics fm
+            JOIN filings f ON fm.filing_id = f.id
+            JOIN companies c ON f.cik = c.cik
+            WHERE c.cik = %s
+            """
+        params = [cik]
+
+        if fiscal_year:
+            query += " AND fm.fiscal_year = ANY(%s)"
+            params.append(fiscal_year)
+
+        if metric_name:
+            query += " AND fm.metric_name = ANY(%s)"
+            params.append(metric_name)
+
+        query += " ORDER BY c.ticker, fm.metric_name, fm.fiscal_year;"
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        cursor.close()
         return rows
 
     def close(self):

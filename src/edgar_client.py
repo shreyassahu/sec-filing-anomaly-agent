@@ -1,8 +1,8 @@
 import requests
 import time
 import os
-from utils.format_accession_number import format_accession_number
-from insert_filings_to_db import DBOperations
+from src.utils.format_accession_number import format_accession_number
+from src.insert_filings_to_db import DBOperations
 
 HEADERS = {"User-Agent": "sec-filing-anomaly-agent (shreyassahu2208@gmail.com)"}
 
@@ -45,6 +45,8 @@ class EdgarClient:
 
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
+
+    # def retrive_cik_from_ticker(self, ticker: str):
 
 
     def download_filings(self, filing_url: str):
