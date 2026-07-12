@@ -32,9 +32,7 @@ system_prompt = (
     "- If a metric is unavailable (e.g., operating income for banks like JPMorgan), "
     "acknowledge it and explain that banks have a different income statement structure.\n"
     "- Present financial data in tables when comparing multiple metrics or companies.\n\n"
-    "- When answering financial questions, always provide the requested metric first, "
-    "then add brief year-over-year context if the data is available. Keep responses concise "
-    "— no more than 5-6 lines unless the user asks for detail."
+    "- Keep responses concise — no more than 5-6 lines unless the user asks for detail."
 
 
     "COMPANY CONTEXT:\n"
@@ -122,33 +120,19 @@ class SECAgent:
         return agent_builder.compile()
 
 
-# agent_builder = StateGraph(MessagesState)
+if __name__ == "__main__":
 
-# agent_builder.add_node("llm_call", llm_call)
-# agent_builder.add_node("tool_node", tool_node)
+    agent = SECAgent().build()
 
-# agent_builder.add_edge(START, "llm_call")
-# agent_builder.add_conditional_edges("llm_call",
-#                                     should_continue,
-#                                     ["tool_node", END])
-
-# agent_builder.add_edge("tool_node", "llm_call")
-
-
-# agent = agent_builder.compile()
-
-
-# # messages = [HumanMessage(content="Why did Apple's revenue decline in 2023?")]
-# # messages = [HumanMessage(content="What was JPMorgan's total debt in 2024?")]
-# messages = [HumanMessage(content="What were Nvidia's financial anomalies in 2024?")]
-# messages = agent.invoke({"messages" : messages})
-
-# # tool_names = [tc["name"] for msg in messages for tc in getattr(msg, "tool_calls", [])]
-
-# for m in messages["messages"]:
-#     # m.pretty_print()
-#     for tc in getattr(m, "tool_calls", []):
-#         print(tc["name"])
+    messages = []
+    while True:
+        user_input = input("\nYou: ")
+        if user_input.lower() in ["quit", "exit"]:
+            break
+        messages.append(HumanMessage(content=user_input))
+        result = agent.invoke({"messages": messages})
+        messages = result["messages"]
+        print("\nAgent:", messages[-1].content)
 
 
 
